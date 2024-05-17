@@ -6,10 +6,7 @@ import id.ac.ui.cs.rpl.flextime.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +30,13 @@ public class HomeController {
 
     @Autowired
     private CustomerTrainingService customerTrainingService;
+
+    @Autowired
+    private SessionPlanService sessionPlanService;
+    @Autowired
+    private TrainingService trainingService;
+    @Autowired
+    private CustomizationService customizationService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -59,22 +63,38 @@ public class HomeController {
 
         model.addAttribute("customerTrainings", customerTrainings);
 
-        return "";
+        return "homePage/sessionDetails";
     }
 
-    @PostMapping("")
-    public String addSessionToFitnessPlan(Model model){
-        return "";
+    @PostMapping("/{sessionPlanId}/add/{trainingId}")
+    public String createCustomization(@PathVariable String sessionPlanId, Model model, @PathVariable String trainingId, @ModelAttribute("customization") Customization customization){
+        SessionPlan sessionPlan = sessionPlanService.getSessionPlanById(sessionPlanId).orElseThrow();
+        Training training = trainingService.getTrainingById(trainingId).orElseThrow();
+
+        customizationService.saveCustomization(customization);
+
+        CustomerTraining customerTraining = new CustomerTraining();
+        customerTraining.setSessionPlan(sessionPlan);
+        customerTraining.setTraining(training);
+        customerTraining.setCustomization(customization);
+        customerTrainingService.save(customerTraining);
+
+        return "homepage/sessionDetails";
     }
 
-    @PostMapping("")
-    public String deleteSessionFromFitnessPlan(){
-        return "";
+    @PostMapping("/{sessionPlanId}/delete")
+    public String deleteSessionFromFitnessPlan(Model model, @PathVariable String sessionPlanId){
+        sessionPlanService.deleteSessionPlanById(sessionPlanId);
+        return "homePage/sessionDetails";
     }
 
-    @PostMapping
-    public String editSessionFromFitnessPlan(){
-        return "";
+    @PostMapping("/{sessionPlanId}/edit/{customerTrainingId}")
+    public String editCustomization( @PathVariable String sessionPlanId, @PathVariable String customerTrainingId, Model model){
+            CustomerTraining customerTraining = customerTrainingService.getCustomerTrainingById(customerTrainingId);
+            model.addAttribute("customization", customerTraining.getCustomization());
+            model.addAttribute("customerTrainingId", customerTrainingId);
+
+        return "customization/edit";
     }
 
 
