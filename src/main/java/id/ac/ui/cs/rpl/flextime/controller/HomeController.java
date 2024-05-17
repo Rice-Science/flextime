@@ -1,21 +1,21 @@
 package id.ac.ui.cs.rpl.flextime.controller;
 
-import id.ac.ui.cs.rpl.flextime.model.AssignmentSchedules;
-import id.ac.ui.cs.rpl.flextime.model.ClassSchedules;
-import id.ac.ui.cs.rpl.flextime.model.FitnessPlan;
+import id.ac.ui.cs.rpl.flextime.model.*;
 import org.springframework.ui.Model;
-import id.ac.ui.cs.rpl.flextime.model.SessionPlan;
 import id.ac.ui.cs.rpl.flextime.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@RequestMapping("")
 @Controller
 public class HomeController {
 
@@ -30,6 +30,9 @@ public class HomeController {
 
     @Autowired
     private FitnessPlanService fitnessService;
+
+    @Autowired
+    private CustomerTrainingService customerTrainingService;
 
     @GetMapping("/")
     public String home(Model model) {
@@ -48,6 +51,15 @@ public class HomeController {
         model.addAttribute("classSchedules", classSchedules);
 
         return "home";
+    }
+
+    @GetMapping("/{sessionPlanId}")
+    public String getSessionPlanTrainingDetails(Model model, @PathVariable String sessionPlanId){
+        List<CustomerTraining> customerTrainings = customerTrainingService.getCustomerTrainingsBySessionPlanId(sessionPlanId);
+
+        model.addAttribute("customerTrainings", customerTrainings);
+
+        return "";
     }
 
     @PostMapping("")
