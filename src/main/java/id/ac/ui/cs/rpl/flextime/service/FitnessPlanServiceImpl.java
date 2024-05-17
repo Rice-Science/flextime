@@ -1,10 +1,12 @@
 package id.ac.ui.cs.rpl.flextime.service;
 
 import id.ac.ui.cs.rpl.flextime.model.FitnessPlan;
+import id.ac.ui.cs.rpl.flextime.model.User;
 import id.ac.ui.cs.rpl.flextime.repository.FitnessPlanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,6 +24,7 @@ public class FitnessPlanServiceImpl implements FitnessPlanService {
     public Optional<FitnessPlan> getFitnessPlanById(String id) {
         return fitnessPlanRepository.findById(UUID.fromString(id));
     }
+
 
     @Override
     public void deleteFitnessPlanById(String id) {
