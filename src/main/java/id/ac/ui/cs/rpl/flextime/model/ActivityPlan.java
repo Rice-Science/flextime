@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Setter
 @Table(name="tbl_activity")
 public class ActivityPlan {
+
 
     @Id
     @Column(name = "id")
@@ -34,4 +36,7 @@ public class ActivityPlan {
     @ElementCollection
     private Map<Date, UUID> sessionSchedules;
 
+    public ActivityPlan() {
+        this.sessionSchedules = new HashMap<>();
+    }
 }
