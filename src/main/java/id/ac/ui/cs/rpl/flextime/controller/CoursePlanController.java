@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/course-plan")
@@ -134,12 +135,19 @@ public class CoursePlanController {
     public String editAssignmentPage(@PathVariable String id, Model model) {
         AssignmentSchedules assignment = assignmentService.findById(id).orElseThrow(null);
         model.addAttribute("assignment", assignment);
+        model.addAttribute("assignmentId", id);
         return "CoursePlan/EditAssignment";
     }
 
     @PostMapping("/update-assignment/{id}")
-    public String updateAssignment(@PathVariable String id, @RequestBody AssignmentSchedules updatedAssignment) {
-        assignmentService.update(id, updatedAssignment);
+    public String updateAssignment(@PathVariable String id, @ModelAttribute("assignment") AssignmentSchedules updatedAssignment) {
+        AssignmentSchedules assignment = assignmentService.findById(id).orElseThrow(null);
+        updatedAssignment.setCustomer(userService.findByUsername(SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName()));
+        updatedAssignment.setAssignmentSchedulesId(assignment.getAssignmentSchedulesId());
+        assignmentService.update(updatedAssignment);
         return "redirect:/course-plan";
     }
 
