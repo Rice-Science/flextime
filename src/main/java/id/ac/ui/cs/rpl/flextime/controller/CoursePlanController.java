@@ -29,7 +29,7 @@ public class CoursePlanController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/list")
+    @GetMapping("")
     public String assignmentListPage (Model model) {
         List<AssignmentSchedules> allAssignments = assignmentService.findAssignmentByCustomerId(
                 userService.findByUsername(SecurityContextHolder
@@ -71,7 +71,7 @@ public class CoursePlanController {
                 .getAuthentication()
                 .getName()));
         assignmentService.create(assignment);
-        return "redirect:course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @GetMapping("/create-class")
@@ -90,7 +90,7 @@ public class CoursePlanController {
                         .getName())
         );
         classService.create(classSchedules);
-        return "redirect:course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @GetMapping("/create-test")
@@ -109,30 +109,30 @@ public class CoursePlanController {
                         .getName())
         );
         testService.create(testSchedules);
-        return "redirect:course-plan/list";
+        return "redirect:/course-plan";
     }
 
-    @DeleteMapping("/delete-assignments/{id}")
+    @PostMapping("/delete-assignments/{id}")
     public String deleteAssignment(@PathVariable String id) {
         assignmentService.delete(id);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @DeleteMapping("/delete-class/{id}")
     public String deleteClass(@PathVariable String id) {
         classService.delete(id);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @DeleteMapping("/delete-test/{id}")
     public String deleteTest(@PathVariable String id) {
         testService.delete(id);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @GetMapping("/edit-assignment/{id}")
     public String editAssignmentPage(@PathVariable String id, Model model) {
-        Optional<AssignmentSchedules> assignment = assignmentService.findById(id);
+        AssignmentSchedules assignment = assignmentService.findById(id).orElseThrow(null);
         model.addAttribute("assignment", assignment);
         return "CoursePlan/EditAssignment";
     }
@@ -140,7 +140,7 @@ public class CoursePlanController {
     @PostMapping("/update-assignment/{id}")
     public String updateAssignment(@PathVariable String id, @RequestBody AssignmentSchedules updatedAssignment) {
         assignmentService.update(id, updatedAssignment);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @GetMapping("/edit-class/{id}")
@@ -153,7 +153,7 @@ public class CoursePlanController {
     @PostMapping("/update-class/{id}")
     public String updateClass(@PathVariable String id, @RequestBody ClassSchedules updatedClass) {
         classService.update(id, updatedClass);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 
     @GetMapping("/edit-test/{id}")
@@ -166,6 +166,6 @@ public class CoursePlanController {
     @PostMapping("/update-test/{id}")
     public String updateTest(@PathVariable String id, @RequestBody TestSchedules updatedTest) {
         testService.update(id, updatedTest);
-        return "redirect:/course-plan/list";
+        return "redirect:/course-plan";
     }
 }
