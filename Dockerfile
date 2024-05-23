@@ -1,7 +1,16 @@
 FROM docker.io/library/eclipse-temurin:21-jdk-alpine AS builder
 
+RUN apk add --no-cache nodejs npm
+
 WORKDIR /src/flextime
 COPY . .
+
+# Install Tailwind CSS and other dependencies
+RUN npm install
+
+# Run Tailwind CSS build
+RUN npx tailwindcss -i ./src/input.css -o ./dist/output.css --minify
+
 RUN chmod +x ./gradlew
 RUN ./gradlew clean bootJar
 
