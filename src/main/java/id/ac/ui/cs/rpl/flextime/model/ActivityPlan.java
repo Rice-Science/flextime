@@ -19,6 +19,10 @@ public class ActivityPlan {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID activityId;
 
+    @OneToOne
+    @JoinColumn(name="user_id")
+    private User user;
+
     @ManyToOne
     @JoinColumn(name="class_schedule_id")
     private ClassSchedules classSchedules;
