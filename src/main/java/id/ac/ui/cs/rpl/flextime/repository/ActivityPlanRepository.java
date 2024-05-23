@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface ActivityPlanRepository extends JpaRepository<ActivityPlan, UUID> {
+    ActivityPlan findActivityPlanByUser_Id(UUID user_id);
 }
