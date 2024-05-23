@@ -9,7 +9,7 @@ COPY . .
 RUN npm install
 
 # Run Tailwind CSS build
-RUN npx tailwindcss -i ./src/input.css -o ./dist/output.css --minify
+RUN npx tailwindcss -i src/main/resources/static/input.css -o src/main/resources/static/output.css --minify
 
 RUN chmod +x ./gradlew
 RUN ./gradlew clean bootJar
