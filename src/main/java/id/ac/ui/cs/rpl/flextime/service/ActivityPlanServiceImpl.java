@@ -1,10 +1,8 @@
 package id.ac.ui.cs.rpl.flextime.service;
 
-import id.ac.ui.cs.rpl.flextime.model.ActivityPlan;
-import id.ac.ui.cs.rpl.flextime.model.AssignmentSchedules;
-import id.ac.ui.cs.rpl.flextime.model.ClassSchedules;
-import id.ac.ui.cs.rpl.flextime.model.SessionPlan;
+import id.ac.ui.cs.rpl.flextime.model.*;
 import id.ac.ui.cs.rpl.flextime.repository.ActivityPlanRepository;
+import id.ac.ui.cs.rpl.flextime.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,13 +17,18 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     private AssignmentSchedulesService assignmentSchedulesService;
     @Autowired
     private ClassSchedulesService classSchedulesService;
+    @Autowired
+    private UserRepository userRepository;
 
 
-    public ActivityPlan createActivityPlan(UUID userId) {
+    public ActivityPlan createActivityPlan(User user) {
+        UUID userId = user.getId();
         List<AssignmentSchedules> assignmentSchedules = assignmentSchedulesService.findAssignmentByCustomerId(userId.toString());
         List<ClassSchedules> classSchedules = classSchedulesService.findClassByCustomerId(userId.toString());
 
         ActivityPlan  activityPlan = new ActivityPlan();
+
+        activityPlan.setUser(user);
 
         for (AssignmentSchedules assignmentSchedule : assignmentSchedules) {
             activityPlan.setAssignmentSchedules(assignmentSchedule);
@@ -66,6 +69,7 @@ public class ActivityPlanServiceImpl implements ActivityPlanService {
     public Optional<ActivityPlan> getActivityPlanById(UUID id) {
         return activityPlanRepository.findById(id);
     }
+
 
 
 
