@@ -1,28 +1,73 @@
 package id.ac.ui.cs.rpl.flextime.service;
 
 import id.ac.ui.cs.rpl.flextime.model.ActivityPlan;
+import id.ac.ui.cs.rpl.flextime.model.AssignmentSchedules;
+import id.ac.ui.cs.rpl.flextime.model.ClassSchedules;
 import id.ac.ui.cs.rpl.flextime.model.SessionPlan;
+import id.ac.ui.cs.rpl.flextime.repository.ActivityPlanRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class ActivityPlanServiceImpl implements ActivityPlanService {
 
+    @Autowired
+    private ActivityPlanRepository activityPlanRepository;
+    @Autowired
+    private AssignmentSchedulesService assignmentSchedulesService;
+    @Autowired
+    private ClassSchedulesService classSchedulesService;
+
+
     public ActivityPlan createActivityPlan(UUID userId) {
-        return null;
+        List<AssignmentSchedules> assignmentSchedules = assignmentSchedulesService.findAssignmentByCustomerId(userId.toString());
+        List<ClassSchedules> classSchedules = classSchedulesService.findClassByCustomerId(userId.toString());
+
+        ActivityPlan  activityPlan = new ActivityPlan();
+
+        for (AssignmentSchedules assignmentSchedule : assignmentSchedules) {
+            activityPlan.setAssignmentSchedules(assignmentSchedule);
+        }
+
+        for (ClassSchedules classSchedule : classSchedules){
+            activityPlan.setClassSchedules(classSchedule);
+        }
+
+        return activityPlan;
     }
 
-    public void addSession(SessionPlan sessionPlan, Date time, ActivityPlan activityPlan) {
+    public void addSession(UUID sessionId, Date time, ActivityPlan activityPlan) {
+        Map<Date, UUID> sessionSchedules =  activityPlan.getSessionSchedules();
+        sessionSchedules.put(time, sessionId);
     }
 
-    public ActivityPlan findActivityPlanByUser_Id(UUID userId) {
-        return null;
+    public ActivityPlan getActivityPlanByUser_Id(UUID userId) {
+        return activityPlanRepository.findActivityPlanByUser_Id(userId);
     }
 
     public void removeSession(Date time, ActivityPlan activityPlan) {
+        Map<Date, UUID> sessionSchedules = activityPlan.getSessionSchedules();
+        sessionSchedules.remove(time);
     }
+
+    public Date calculateEndTimeSession( Date time, int duration) {
+        // Create a Calendar instance and set it to the given start time
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(time);
+
+        // Add the duration to the calendar (assuming duration is in seconds)
+        calendar.add(Calendar.SECOND, duration);
+
+        return calendar.getTime();
+    }
+
+    public Optional<ActivityPlan> getActivityPlanById(UUID id) {
+        return activityPlanRepository.findById(id);
+    }
+
+
 
 
 
